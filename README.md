@@ -9,6 +9,6 @@
     -  //例（カレントディレクトリ直下にplot.pyがある場合）
     -  python plot.py
   -  "plot_result"というフォルダが自動で作られ，その中に画像ファイル等が出力される
-
-![sample2_res](https://github.com/user-attachments/assets/2f8e1266-6591-48e9-a0d4-c35e5abb42dd)
-![sample3_res](https://github.com/user-attachments/assets/5f6ceaa7-0a3b-4110-a487-6962e822c4cc)
+![sample1_res](https://github.com/user-attachments/assets/f027bc17-8276-4903-8b0d-8fdd14f64601)
+![sample2_res](https://github.com/user-attachments/assets/bd22881b-4e59-4c29-9611-b884a5160061)
+![sample3_res](https://github.com/user-attachments/assets/bdb00110-0414-4c76-8fd1-4637a8a87ad8)
