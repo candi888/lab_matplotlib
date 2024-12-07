@@ -197,6 +197,32 @@ def set_ax_yticks_log(
     return
 
 
+def transform_pointlength_to_datalength(
+    point_length: float, ax: Axes, dpi: int, axis_index: int
+) -> float:
+    base_coordinate_data_list = (0, 0)
+    # 基準点をデータ→ディスプレイ座標へ
+    base_coordinate_point_list = ax.transData.transform(
+        base_coordinate_data_list
+    ).tolist()
+
+    # point_length分移動した点の座標を保存
+    shifted_coordinate_point_list = base_coordinate_point_list[:]
+    shifted_coordinate_point_list[axis_index] += (dpi / 72) * point_length
+
+    # 移動後の点をディスプレイ→データ座標に戻す
+    shifted_coordinate_data_list = (
+        ax.transData.inverted().transform(shifted_coordinate_point_list).tolist()
+    )
+
+    # このとき、(shifted_data - base_data)が、L_ptポイントに相当するデータ座標上の長さ
+    data_length = (
+        shifted_coordinate_data_list[axis_index] - base_coordinate_data_list[axis_index]
+    )
+
+    return data_length
+
+
 def set_xlabel(
     ax: Axes,
     xlabel_text: str,
@@ -204,11 +230,16 @@ def set_xlabel(
     ymin: float,
     xlabel_offset: float,
     xlabel_font_size: float,
+    dpi: int,
 ) -> None:
     ax.text(
         s=xlabel_text,
         x=xlabel_pos,
-        y=ymin + xlabel_offset,
+        # y=ymin + xlabel_offset,
+        y=ymin
+        + transform_pointlength_to_datalength(
+            point_length=-(10.0 + 4.0), ax=ax, dpi=dpi, axis_index=1
+        ),
         horizontalalignment="center",
         verticalalignment="top",
         fontsize=xlabel_font_size,
@@ -224,12 +255,17 @@ def set_ylabel(
     xmin: float,
     ylabel_offset: float,
     ylabel_font_size: float,
+    dpi: int,
     is_horizontal_ylabel: bool,
 ) -> None:
     tmp = ax.text(
         s=ylabel_text,
         y=ylabel_pos,
-        x=xmin + ylabel_offset,
+        x=xmin
+        + transform_pointlength_to_datalength(
+            point_length=-(10.0 + 4.0), ax=ax, dpi=dpi, axis_index=0
+        )
+        + 1.5,
         verticalalignment="center",
         horizontalalignment="right",
         fontsize=ylabel_font_size,
@@ -443,6 +479,7 @@ def main() -> None:
         ymin=ymin,
         xlabel_offset=xlabel_offset,
         xlabel_font_size=xlabel_font_size,
+        dpi=dpi,
     )
     set_ylabel(
         ax=ax,
@@ -451,6 +488,7 @@ def main() -> None:
         xmin=xmin,
         ylabel_offset=ylabel_offset,
         ylabel_font_size=ylabel_font_size,
+        dpi=dpi,
         is_horizontal_ylabel=is_horizontal_ylabel,
     )
 
@@ -574,4 +612,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    print(mpl.matplotlib_fname())
     main()
