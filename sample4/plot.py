@@ -39,7 +39,7 @@ def set_mplparams_init(
     else:
         plt.rcParams["mathtext.fontset"] = "cm"
 
-    # x軸,y軸の目盛りの向き
+    # 目盛り関係
     plt.rcParams["xtick.direction"] = "out"
     plt.rcParams["ytick.direction"] = "out"
 
@@ -104,8 +104,13 @@ def set_ax_xticks(
     space_x_ticks: float,
     anchor_x_ticks: float,
     strformatter_x: str | None,
+    x_tickslabel_pad: float,
+    x_ticks_length: float,
+    x_ticks_width: float,
     is_plot_mticks_x: bool,
     num_x_mtick: int,
+    x_mticks_length: float,
+    x_mticks_width: float,
     xticks_font_size: float,
 ) -> None:
     ax.xaxis.set_major_locator(
@@ -118,7 +123,23 @@ def set_ax_xticks(
     if is_plot_mticks_x:
         ax.xaxis.set_minor_locator(ticker.AutoMinorLocator(n=num_x_mtick + 1))
 
-    ax.tick_params(axis="x", labelsize=xticks_font_size)
+    # 主目盛り
+    ax.tick_params(
+        axis="x",
+        which="major",
+        labelsize=xticks_font_size,
+        pad=x_tickslabel_pad,
+        length=x_ticks_length,
+        width=x_ticks_width,
+    )
+
+    # 副目盛り
+    ax.tick_params(
+        axis="x",
+        which="minor",
+        length=x_mticks_length,
+        width=x_mticks_width,
+    )
 
     return
 
@@ -128,8 +149,13 @@ def set_ax_yticks(
     space_y_ticks: float,
     anchor_y_ticks: float,
     strformatter_y: str | None,
+    y_tickslabel_pad: float,
+    y_ticks_length: float,
+    y_ticks_width: float,
     is_plot_mticks_y: bool,
     num_y_mtick: int,
+    y_mticks_length: float,
+    y_mticks_width: float,
     yticks_font_size: float,
 ) -> None:
     ax.yaxis.set_major_locator(
@@ -142,7 +168,23 @@ def set_ax_yticks(
     if is_plot_mticks_y:
         ax.yaxis.set_minor_locator(ticker.AutoMinorLocator(n=num_y_mtick + 1))
 
-    ax.tick_params(axis="y", labelsize=yticks_font_size)
+    # 主目盛り
+    ax.tick_params(
+        axis="y",
+        which="major",
+        labelsize=yticks_font_size,
+        pad=y_tickslabel_pad,
+        length=y_ticks_length,
+        width=y_ticks_width,
+    )
+
+    # 副目盛り
+    ax.tick_params(
+        axis="y",
+        which="minor",
+        length=y_mticks_length,
+        width=y_mticks_width,
+    )
 
     return
 
@@ -151,7 +193,12 @@ def set_ax_xticks_log(
     ax: Axes,
     log_base_x: int,
     log_num_xticks: int | None,
+    x_tickslabel_pad: float,
+    x_ticks_length: float,
+    x_ticks_width: float,
     is_log_plot_mticks_x: bool,
+    x_mticks_length: float,
+    x_mticks_width: float,
     xticks_font_size: float,
 ) -> None:
     ax.set_xscale("log")
@@ -160,8 +207,23 @@ def set_ax_xticks_log(
     )
     ax.xaxis.set_major_formatter(ticker.LogFormatterMathtext(base=log_base_x))
 
-    # フォントサイズ
-    ax.tick_params(axis="x", labelsize=xticks_font_size)
+    # 主目盛り
+    ax.tick_params(
+        axis="x",
+        which="major",
+        labelsize=xticks_font_size,
+        pad=x_tickslabel_pad,
+        length=x_ticks_length,
+        width=x_ticks_width,
+    )
+
+    # 副目盛り
+    ax.tick_params(
+        axis="x",
+        which="minor",
+        length=x_mticks_length,
+        width=x_mticks_width,
+    )
 
     # 副目盛り
     if is_log_plot_mticks_x:
@@ -176,7 +238,12 @@ def set_ax_yticks_log(
     ax: Axes,
     log_base_y: int,
     log_num_yticks: int | None,
+    y_tickslabel_pad: float,
+    y_ticks_length: float,
+    y_ticks_width: float,
     is_log_plot_mticks_y: bool,
+    y_mticks_length: float,
+    y_mticks_width: float,
     yticks_font_size: float,
 ) -> None:
     ax.set_yscale("log")
@@ -185,8 +252,23 @@ def set_ax_yticks_log(
     )
     ax.yaxis.set_major_formatter(ticker.LogFormatterMathtext(base=log_base_y))
 
-    # フォントサイズ
-    ax.tick_params(axis="y", labelsize=yticks_font_size)
+    # 主目盛り
+    ax.tick_params(
+        axis="y",
+        which="major",
+        labelsize=yticks_font_size,
+        pad=y_tickslabel_pad,
+        length=y_ticks_length,
+        width=y_ticks_width,
+    )
+
+    # 副目盛り
+    ax.tick_params(
+        axis="y",
+        which="minor",
+        length=y_mticks_length,
+        width=y_mticks_width,
+    )
 
     # 副目盛り
     if is_log_plot_mticks_y:
@@ -235,13 +317,12 @@ def set_xlabel(
     ax.text(
         s=xlabel_text,
         x=xlabel_pos,
-        # y=ymin + xlabel_offset,
         y=ymin
         + transform_pointlength_to_datalength(
-            point_length=-(10.0 + 4.0), ax=ax, dpi=dpi, axis_index=1
+            point_length=xlabel_offset, ax=ax, dpi=dpi, axis_index=1
         ),
         horizontalalignment="center",
-        verticalalignment="top",
+        verticalalignment="center",
         fontsize=xlabel_font_size,
         gid="x_title_text",
     )
@@ -257,17 +338,17 @@ def set_ylabel(
     ylabel_font_size: float,
     dpi: int,
     is_horizontal_ylabel: bool,
+    y_horizontalalignment: str,
 ) -> None:
     tmp = ax.text(
         s=ylabel_text,
         y=ylabel_pos,
         x=xmin
         + transform_pointlength_to_datalength(
-            point_length=-(10.0 + 4.0), ax=ax, dpi=dpi, axis_index=0
-        )
-        + 1.5,
+            point_length=ylabel_offset, ax=ax, dpi=dpi, axis_index=0
+        ),
         verticalalignment="center",
-        horizontalalignment="right",
+        horizontalalignment=y_horizontalalignment,
         fontsize=ylabel_font_size,
         gid="y_title_text",
     )
@@ -290,17 +371,21 @@ def main() -> None:
     # ! ---↓基本設定１------------------------------------------------
     # *---出力画像の大きさ [cm]---
     # （参考）A4用紙の縦向きサイズ（縦 × 横）は 29.7 × 21.0[cm]
-    fig_vertical_cm = 10.0  # 縦方向
+    fig_vertical_cm = 8.0  # 縦方向
     fig_horizontal_cm = 18.0  # 横方向
     # *---出力画像の大きさ [cm]---
 
     # *---全体の見た目の設定----
     axis_lw = 1.7  # 軸線の太さ
     is_aspect_equal = False  # グラフのx軸,y軸のアスペクト比を1:1で固定するか
-    plt.rcParams["xtick.top"] = False  # 上側の軸の目盛りを表示するか
+    plt.rcParams["axes.spines.bottom"] = True  # 下側の軸を表示するか
+    plt.rcParams["axes.spines.left"] = True  # 左側の軸を表示するか
     plt.rcParams["axes.spines.top"] = False  # 上側の軸を表示するか
-    plt.rcParams["ytick.right"] = False  # 右側の軸の目盛りを表示するか
     plt.rcParams["axes.spines.right"] = False  # 右側の軸を表示するか
+    plt.rcParams["xtick.bottom"] = True  # 下側のx軸の目盛りを表示
+    plt.rcParams["ytick.left"] = True  # 左側のy軸の目盛りを表示
+    plt.rcParams["xtick.top"] = False  # 上側のx軸の目盛りを非表示
+    plt.rcParams["ytick.right"] = False  # 右側のy軸の目盛りを非表示
     # *---全体の見た目の設定----
 
     # *---フォント関連---
@@ -325,14 +410,14 @@ def main() -> None:
     anchor_x_ticks = 4.0  # 主目盛りで必ず表示する座標
     space_x_ticks = 2.0  # 主目盛りの間隔
     strformatter_x = "%.1f"  # 主目盛りの値の書式等を変更したいときにいじる（変更しない場合はNoneにする）．
-    plt.rcParams["xtick.major.pad"] = 4.0  # x軸主目盛りから目盛りラベルをどれだけ離すか
-    plt.rcParams["xtick.major.width"] = axis_lw  # x軸主目盛り線の線幅
-    plt.rcParams["xtick.major.size"] = 10  # x軸主目盛り線の長さ
+    x_tickslabel_pad = 4.0  # x軸主目盛りから目盛りラベルをどれだけ離すか
+    x_ticks_length = 10.0  # x軸主目盛り線の長さ
+    x_ticks_width = axis_lw  # x軸主目盛り線の線幅
     # -副目盛り-
     is_plot_mticks_x = True  # 副目盛りをプロットするか
     num_x_mtick = 3  # 副目盛りの数
-    plt.rcParams["xtick.minor.width"] = 0.75  # x軸補助目盛り線の線幅
-    plt.rcParams["xtick.minor.size"] = 5  # x軸補助目盛り線の長さ
+    x_mticks_length = 5.0  # x軸補助目盛り線の長さ
+    x_mticks_width = 0.75  # x軸補助目盛り線の線幅
     # *---目盛りの設定（x軸）---
 
     # *---（対数軸）目盛りの設定（x軸）---
@@ -352,14 +437,14 @@ def main() -> None:
     anchor_y_ticks = 0.0  # 主目盛りで必ず表示する座標
     space_y_ticks = 1000  # 主目盛りの間隔
     strformatter_y = None  # 主目盛りの値の書式等を変更したいときにいじる（変更しない場合はNoneにする）．
-    plt.rcParams["ytick.major.pad"] = 4.0  # y軸主目盛りから目盛りラベルをどれだけ離すか
-    plt.rcParams["ytick.major.width"] = axis_lw  # y軸主目盛り線の線幅
-    plt.rcParams["ytick.major.size"] = 10  # y軸主目盛り線の長さ
+    y_tickslabel_pad = 4.0  # y軸主目盛りから目盛りラベルをどれだけ離すか
+    y_ticks_length = 10.0  # y軸主目盛り線の長さ
+    y_ticks_width = axis_lw  # y軸主目盛り線の線幅
     # -副目盛り-
     is_plot_mticks_y = True  # 副目盛りをプロットするか
     num_y_mtick = 4  # 副目盛りの数
-    plt.rcParams["ytick.minor.width"] = 0.75  # y軸補助目盛り線の線幅
-    plt.rcParams["ytick.minor.size"] = 5  # y軸補助目盛り線の長さ
+    y_mticks_length = 5.0  # y軸補助目盛り線の長さ
+    y_mticks_width = 0.75  # y軸補助目盛り線の線幅
     # *---目盛りの設定（y軸）---
 
     # *---（対数軸）目盛りの設定（x軸）---
@@ -376,14 +461,22 @@ def main() -> None:
 
     # *---軸ラベルの設定（x軸）---
     xlabel_text = r"$t \, \mathrm{[s]}$"  # ラベルのテキスト
-    xlabel_pos = 10.9  # テキストの中心のx座標
-    xlabel_offset = -250  # yminからの，テキストの上端のy座標の変位
+    xlabel_pos = 10.9  # テキストの中心のx座標（データの単位）
+    # TODO layout=constrainedのせいで厳密に定まらない場合があるのでその場合微調整がいる
+    xlabel_offset = -(
+        x_ticks_length + x_tickslabel_pad + xticks_font_size / 2 + 3
+    )  # yminからの，テキストの上端のy座標の変位（ポイント単位）
     # *---軸ラベルの設定（x軸）---
 
     # *---軸ラベルの設定（y軸）---
     ylabel_text = r"$\mathrm{Pressure \, [N/m^2]}$"  # ラベルのテキスト
-    ylabel_pos = 3800  # テキストの中心のy座標
-    ylabel_offset = 0.4  # xminからの，テキストの右端のx座標の変位
+    ylabel_pos = 3800  # テキストの中心のy座標（データ単位）
+    y_horizontalalignment = (
+        "center"  # テキストのx方向の配置の基準（基本は"center" or "right"）
+    )
+    ylabel_offset = (
+        0  # xminからの，テキストのhorizontalalignmentのx座標の変位（ポイント単位）
+    )
     is_horizontal_ylabel = True  # ラベルを横向きにするか
     # *---軸ラベルの設定（y軸）---
 
@@ -439,7 +532,12 @@ def main() -> None:
             ax=ax,
             log_base_x=log_base_x,
             log_num_xticks=log_num_xticks,
+            x_tickslabel_pad=x_tickslabel_pad,
+            x_ticks_length=x_ticks_length,
+            x_ticks_width=x_ticks_width,
             is_log_plot_mticks_x=is_log_plot_mticks_x,
+            x_mticks_length=x_mticks_length,
+            x_mticks_width=x_mticks_width,
             xticks_font_size=xticks_font_size,
         )
     else:
@@ -448,8 +546,13 @@ def main() -> None:
             space_x_ticks=space_x_ticks,
             anchor_x_ticks=anchor_x_ticks,
             strformatter_x=strformatter_x,
+            x_tickslabel_pad=x_tickslabel_pad,
+            x_ticks_length=x_ticks_length,
+            x_ticks_width=x_ticks_width,
             is_plot_mticks_x=is_plot_mticks_x,
             num_x_mtick=num_x_mtick,
+            x_mticks_length=x_mticks_length,
+            x_mticks_width=x_mticks_width,
             xticks_font_size=xticks_font_size,
         )
 
@@ -458,7 +561,12 @@ def main() -> None:
             ax=ax,
             log_base_y=log_base_y,
             log_num_yticks=log_num_yticks,
+            y_tickslabel_pad=y_tickslabel_pad,
+            y_ticks_length=y_ticks_length,
+            y_ticks_width=y_ticks_width,
             is_log_plot_mticks_y=is_log_plot_mticks_y,
+            y_mticks_length=y_mticks_length,
+            y_mticks_width=y_mticks_width,
             yticks_font_size=yticks_font_size,
         )
     else:
@@ -467,8 +575,13 @@ def main() -> None:
             space_y_ticks=space_y_ticks,
             anchor_y_ticks=anchor_y_ticks,
             strformatter_y=strformatter_y,
+            y_tickslabel_pad=y_tickslabel_pad,
+            y_ticks_length=y_ticks_length,
+            y_ticks_width=y_ticks_width,
             is_plot_mticks_y=is_plot_mticks_y,
             num_y_mtick=num_y_mtick,
+            y_mticks_length=y_mticks_length,
+            y_mticks_width=y_mticks_width,
             yticks_font_size=yticks_font_size,
         )
 
@@ -490,6 +603,7 @@ def main() -> None:
         ylabel_font_size=ylabel_font_size,
         dpi=dpi,
         is_horizontal_ylabel=is_horizontal_ylabel,
+        y_horizontalalignment=y_horizontalalignment,
     )
 
     if is_plot_girdline:
@@ -573,10 +687,10 @@ def main() -> None:
 
     if is_plot_legend:
         legend = ax.legend(
-            loc="upper right",  # legendboxのどの位置をbbox_to_anchorで固定するか（公式リファレンス参照）
+            loc="lower right",  # legendboxのどの位置をbbox_to_anchorで固定するか（公式リファレンス参照）
             bbox_to_anchor=(
                 1.0,
-                1.24,
+                1.05,
                 # 0.6,
                 # 1,
             ),  # それぞれ((locで固定するx), (~~するy), (legendboxの横幅), (これはあまり意味ない？))
@@ -586,6 +700,8 @@ def main() -> None:
             borderaxespad=0,
             prop={"size": legend_font_size},
         )
+
+        legend.get_frame().set_linewidth(1.0)  # legendboxの枠線の太さを設定
 
         standardize_legend_sizes(
             legend=legend,
