@@ -73,7 +73,11 @@ def standardize_legend_sizes(
 
 
 def set_fig_ax(
-    fig_horizontal_cm: float, fig_vertical_cm: float, dpi: int, is_aspect_equal: bool
+    fig_horizontal_cm: float,
+    fig_vertical_cm: float,
+    dpi: int,
+    is_aspect_equal: bool,
+    aspect_box: float,
 ) -> tuple[Figure, Axes]:
     scaler_cm_to_inch = 1 / 2.54
 
@@ -86,6 +90,9 @@ def set_fig_ax(
         layout="constrained",
     )
     ax = fig.add_subplot(1, 1, 1)
+
+    ax.set_box_aspect(aspect_box)
+
     if is_aspect_equal:
         ax.set_aspect("equal")
 
@@ -371,13 +378,16 @@ def main() -> None:
     # ! ---↓基本設定１------------------------------------------------
     # *---出力画像の大きさ [cm]---
     # （参考）A4用紙の縦向きサイズ（縦 × 横）は 29.7 × 21.0[cm]
-    fig_vertical_cm = 8.0  # 縦方向
+    fig_vertical_cm = 10.0  # 縦方向
     fig_horizontal_cm = 18.0  # 横方向
     # *---出力画像の大きさ [cm]---
 
     # *---全体の見た目の設定----
     axis_lw = 1.7  # 軸線の太さ
-    is_aspect_equal = False  # グラフのx軸,y軸のアスペクト比を1:1で固定するか
+    is_aspect_equal = (
+        False  # グラフのx軸,y軸の「データ単位の」アスペクト比を1:1で固定するか
+    )
+    aspect_box = 1 / 3  #  グラフのx軸,y軸のアスペクト比（自動設定ならNone）
     plt.rcParams["axes.spines.bottom"] = True  # 下側の軸を表示するか
     plt.rcParams["axes.spines.left"] = True  # 左側の軸を表示するか
     plt.rcParams["axes.spines.top"] = False  # 上側の軸を表示するか
@@ -464,7 +474,7 @@ def main() -> None:
     xlabel_pos = 10.9  # テキストの中心のx座標（データの単位）
     # TODO layout=constrainedのせいで厳密に定まらない場合があるのでその場合微調整がいる
     xlabel_offset = -(
-        x_ticks_length + x_tickslabel_pad + xticks_font_size / 2 + 3
+        x_ticks_length + x_tickslabel_pad + xticks_font_size / 2 + 8
     )  # yminからの，テキストの上端のy座標の変位（ポイント単位）
     # *---軸ラベルの設定（x軸）---
 
@@ -523,6 +533,7 @@ def main() -> None:
         fig_vertical_cm=fig_vertical_cm,
         dpi=dpi,
         is_aspect_equal=is_aspect_equal,
+        aspect_box=aspect_box,
     )
 
     set_ax_lim(ax=ax, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
